@@ -1,0 +1,25 @@
+{
+  "name": "decimaker",
+  "version": "0.0.1",
+  "description": "The decision maker",
+  "main": "dist/index.js",
+  "repository": "git@github.com:FreeHandz/decimaker.git",
+  "author": "Denokon <accounts+git@denokon.xyz>",
+  "license": "MIT",
+  "private": false,
+  "scripts": {
+    "serve": "cross-env TS_NODE_PROJECT=\"tsconfig.webpack.json\" webpack --watch --require ts-node/register"
+  },
+  "devDependencies": {
+    "@types/webpack": "^4.4.0",
+    "cross-env": "^5.2.0",
+    "fork-ts-checker-webpack-plugin": "^0.4.2",
+    "hard-source-webpack-plugin": "^0.8.1",
+    "thread-loader": "^1.1.5",
+    "ts-loader": "^4.4.1",
+    "ts-node": "^6.1.1",
+    "typescript": "^2.9.2",
+    "webpack": "^4.12.0",
+    "webpack-command": "^0.2.1"
+  }
+}
