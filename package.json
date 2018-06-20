@@ -41,6 +41,15 @@
       "jsx",
       "json",
       "node"
-    ]
+    ],
+    "globals": {
+      "ts-jest": {
+        "tsConfigFile": "tsconfig.jest.json"
+      }
+    }
+  },
+  "dependencies": {
+    "@types/lodash-es": "^4.17.0",
+    "lodash-es": "^4.17.10"
   }
 }
