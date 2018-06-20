@@ -11,15 +11,36 @@
     "serve": "cross-env TS_NODE_PROJECT=\"tsconfig.webpack.json\" webpack --watch --require ts-node/register"
   },
   "devDependencies": {
+    "@types/jest": "^23.1.1",
     "@types/webpack": "^4.4.0",
     "cross-env": "^5.2.0",
     "fork-ts-checker-webpack-plugin": "^0.4.2",
     "hard-source-webpack-plugin": "^0.8.1",
+    "jest": "^23.1.0",
+    "source-map": "^0.7.3",
     "thread-loader": "^1.1.5",
+    "ts-jest": "^22.4.6",
     "ts-loader": "^4.4.1",
     "ts-node": "^6.1.1",
     "typescript": "^2.9.2",
     "webpack": "^4.12.0",
     "webpack-command": "^0.2.1"
+  },
+  "jest": {
+    "collectCoverageFrom": [
+      "src/**/*.{js,jsx,ts,tsx}"
+    ],
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(tsx?)$",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ]
   }
 }
