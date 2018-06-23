@@ -31,7 +31,7 @@ export class Decider<TAction, TState, TPlayer>
         return this.exploreState(state)[1];
     }
 
-    public exploreState(state: TState): [number, TAction]
+    private exploreState(state: TState): [number, TAction]
     {
         let availableActions: Iterable<TAction> = this.logic.getActions(state);
         const actionEvaluator = this.logic.getBestActionEvaluator();
