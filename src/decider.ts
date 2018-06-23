@@ -32,22 +32,27 @@ export class Decider<TAction, TState extends HasPlayer<TPlayer>, TPlayer>
     {
         let availableActions: Iterable<TAction> = this.logic.getActions(state);
         const actionEvaluator = this.logic.getBestActionEvaluator();
+        actionEvaluator.next(); // Initialize generator
 
         for (let action of availableActions)
         {
             let nextState = this.logic.applyAction(action, state);
             let score: number;
+            const isTerminal = this.logic.isTerminal(nextState);
+            let actingPlayer: TPlayer;
 
-            if (this.logic.isTerminal(nextState))
+            if (isTerminal)
             {
                 score = this.logic.evaluateState(nextState, state.player);
+                actingPlayer = state.player;
             }
             else
             {
                 [score] = this.exploreState(nextState);
+                actingPlayer = nextState.player;
             }
             
-            actionEvaluator.next([score, action]);
+            actionEvaluator.next([score, action, isTerminal, actingPlayer]);
         }
         
         const {done, value} = actionEvaluator.next();

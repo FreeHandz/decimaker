@@ -49,12 +49,18 @@ const logic = {
             return Number.POSITIVE_INFINITY;
 
         if (currentPlayer === 2 && oppositePlayer === 0)
+            return 2;
+        
+        if (currentPlayer === 1 && oppositePlayer === 0)
             return 1;
 
         if (oppositePlayer === 3)
             return Number.NEGATIVE_INFINITY;
 
         if (oppositePlayer === 2 && currentPlayer === 0)
+            return -2;
+        
+        if (oppositePlayer === 1 && currentPlayer === 0)
             return -1;
 
         return 0;
@@ -106,12 +112,15 @@ const logic = {
         let bestAction: AmoebaAction | null = null;
         let bestScore: number = Number.NEGATIVE_INFINITY;
 
-        let currentChoice: [number, AmoebaAction];
+        let currentChoice: [number, AmoebaAction, boolean, string];
         while (currentChoice = yield)
         {
-            const [score, action] = currentChoice;
+            let [score, action, isTerminal, actingPlayer] = currentChoice;
             
-            if (firstValue || score < bestScore)
+            if (action.symbol !== actingPlayer)
+                score *= -1;
+            
+            if (firstValue || bestScore < score)
             {
                 bestScore = score;
                 bestAction = action;
