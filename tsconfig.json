@@ -56,5 +56,9 @@
      "skipLibCheck": true,
      "esModuleInterop": true,
      "strictPropertyInitialization": false,
-  }
+    "outDir": ""
+  },
+  "files": [
+    "src/index.ts"
+  ]
 }

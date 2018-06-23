@@ -3,17 +3,26 @@
   "version": "0.0.1",
   "description": "The decision maker",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "repository": "git@github.com:FreeHandz/decimaker.git",
   "author": "Denokon <accounts+git@denokon.xyz>",
   "license": "MIT",
   "private": false,
+  "sideEffects": false,
   "scripts": {
-    "serve": "cross-env TS_NODE_PROJECT=\"tsconfig.webpack.json\" webpack --watch --require ts-node/register"
+    "serve": "cross-env TS_NODE_PROJECT=\"tsconfig.webpack.json\" webpack --watch --require ts-node/register --config webpack.config.dev.ts",
+    "build": "cross-env TS_NODE_PROJECT=\"tsconfig.webpack.json\" webpack --require ts-node/register --config webpack.config.prod.ts"
   },
   "devDependencies": {
     "@types/jest": "^23.1.1",
+    "@types/lodash-es": "^4.17.0",
     "@types/webpack": "^4.4.0",
+    "@types/webpack-merge": "^4.1.3",
+    "@types/clean-webpack-plugin": "^0.1.2",
+    "lodash-es": "^4.17.10",
+    "clean-webpack-plugin": "^0.1.19",
     "cross-env": "^5.2.0",
+    "declaration-bundler-webpack-plugin": "^1.0.3",
     "fork-ts-checker-webpack-plugin": "^0.4.2",
     "hard-source-webpack-plugin": "^0.8.1",
     "jest": "^23.1.0",
@@ -24,7 +33,8 @@
     "ts-node": "^6.1.1",
     "typescript": "^2.9.2",
     "webpack": "^4.12.0",
-    "webpack-command": "^0.2.1"
+    "webpack-command": "^0.2.1",
+    "webpack-merge": "^4.1.3"
   },
   "jest": {
     "collectCoverageFrom": [
@@ -47,9 +57,5 @@
         "tsConfigFile": "tsconfig.jest.json"
       }
     }
-  },
-  "dependencies": {
-    "@types/lodash-es": "^4.17.0",
-    "lodash-es": "^4.17.10"
   }
 }

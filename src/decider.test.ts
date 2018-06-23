@@ -1,5 +1,5 @@
 import {Decider, DeciderLogic} from "./decider";
-import {cloneDeep, countBy} from 'lodash';
+import {cloneDeep} from 'lodash';
 
 interface AmoebaState
 {
