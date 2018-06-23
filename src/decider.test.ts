@@ -99,6 +99,27 @@ const logic = {
         }
         return this.evaluateState(state, state.player) === Number.POSITIVE_INFINITY
             || this.evaluateState(state, state.player) === Number.NEGATIVE_INFINITY || !hasEmptySpace;
+    },
+    *getBestActionEvaluator(): Generator
+    {
+        let firstValue = true;
+        let bestAction: AmoebaAction | null = null;
+        let bestScore: number = Number.NEGATIVE_INFINITY;
+
+        let currentChoice: [number, AmoebaAction];
+        while (currentChoice = yield)
+        {
+            const [score, action] = currentChoice;
+            
+            if (firstValue || score < bestScore)
+            {
+                bestScore = score;
+                bestAction = action;
+                firstValue = false;
+            }
+        }
+        
+        return [bestScore, bestAction];
     }
 };
 

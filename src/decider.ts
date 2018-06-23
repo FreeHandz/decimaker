@@ -12,6 +12,8 @@ export interface DeciderLogic<TAction, TState extends HasPlayer<TPlayer>, TPlaye
     evaluateState(state: TState, player: TPlayer): number;
 
     isTerminal(state: TState): boolean;
+    
+    getBestActionEvaluator(): Generator;
 }
 
 export class Decider<TAction, TState extends HasPlayer<TPlayer>, TPlayer>
@@ -29,37 +31,30 @@ export class Decider<TAction, TState extends HasPlayer<TPlayer>, TPlayer>
     public exploreState(state: TState): [number, TAction]
     {
         let availableActions: Iterable<TAction> = this.logic.getActions(state);
-        let firstValue = true;
-        let bestAction: TAction | null = null;
-        let bestScore: number = Number.NEGATIVE_INFINITY;
+        const actionEvaluator = this.logic.getBestActionEvaluator();
 
         for (let action of availableActions)
         {
             let nextState = this.logic.applyAction(action, state);
+            let score: number;
 
             if (this.logic.isTerminal(nextState))
             {
-                let finalStatePoint = this.logic.evaluateState(nextState, state.player);
-
-                if (firstValue || finalStatePoint < bestScore)
-                {
-                    bestScore = finalStatePoint;
-                    bestAction = action;
-                    firstValue = false;
-                }
+                score = this.logic.evaluateState(nextState, state.player);
             }
             else
             {
-                let [stateScore, action] = this.exploreState(nextState);
-                if (firstValue || stateScore < bestScore)
-                {
-                    bestScore = stateScore;
-                    bestAction = action;
-                    firstValue = false;
-                }
+                [score] = this.exploreState(nextState);
             }
+            
+            actionEvaluator.next([score, action]);
         }
+        
+        const {done, value} = actionEvaluator.next();
+        
+        if (!done)
+            throw new Error(`Best action evaluator did not end when asked`);
 
-        return [bestScore, bestAction!];
+        return value;
     }
 }
