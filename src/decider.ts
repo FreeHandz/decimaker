@@ -1,22 +1,25 @@
-export interface HasPlayer<T>
-{
-    player: T;
-}
-
-export interface DeciderLogic<TAction, TState extends HasPlayer<TPlayer>, TPlayer>
+export interface DeciderLogic<TAction, TState, TPlayer>
 {
     getActions(state: TState): Iterable<TAction>;
 
     applyAction(action: TAction, state: TState): TState;
 
-    evaluateState(state: TState, player: TPlayer): number;
+    evaluateState(nextState: TState, state: TState): number;
 
     isTerminal(state: TState): boolean;
     
-    getBestActionEvaluator(): Generator;
+    getBestActionEvaluator(): Iterator<[number, TAction]|undefined>;
 }
 
-export class Decider<TAction, TState extends HasPlayer<TPlayer>, TPlayer>
+export interface Choice<TAction, TState>
+{
+    score: number;
+    action: TAction;
+    state: TState;
+    scoreState: TState;
+}
+
+export class Decider<TAction, TState, TPlayer>
 {
     public constructor(private logic: DeciderLogic<TAction, TState, TPlayer>)
     {
@@ -33,32 +36,39 @@ export class Decider<TAction, TState extends HasPlayer<TPlayer>, TPlayer>
         let availableActions: Iterable<TAction> = this.logic.getActions(state);
         const actionEvaluator = this.logic.getBestActionEvaluator();
         actionEvaluator.next(); // Initialize generator
-
+        
         for (let action of availableActions)
         {
             let nextState = this.logic.applyAction(action, state);
             let score: number;
-            const isTerminal = this.logic.isTerminal(nextState);
-            let actingPlayer: TPlayer;
+            let scoreState: TState;
 
-            if (isTerminal)
+            if (this.logic.isTerminal(nextState))
             {
-                score = this.logic.evaluateState(nextState, state.player);
-                actingPlayer = state.player;
+                score = this.logic.evaluateState(nextState, state);
+                scoreState = state;
             }
             else
             {
                 [score] = this.exploreState(nextState);
-                actingPlayer = nextState.player;
+                scoreState = nextState;
             }
             
-            actionEvaluator.next([score, action, isTerminal, actingPlayer]);
+            actionEvaluator.next({
+                score,
+                action,
+                state,
+                scoreState
+            });
         }
         
         const {done, value} = actionEvaluator.next();
         
         if (!done)
             throw new Error(`Best action evaluator did not end when asked`);
+        
+        if (!value)
+            throw new Error(`Best action evaluator did not return result`);
 
         return value;
     }

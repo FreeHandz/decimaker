@@ -1,6 +1,10 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-     "declaration": true                   /* Generates corresponding '.d.ts' file. */
-  }
+    "declaration": true,                   /* Generates corresponding '.d.ts' file. */
+    "outDir": ""
+  },
+  "files": [
+    "src/index.ts"
+  ]
 }
