@@ -1,5 +1,6 @@
 import {Choice, Decider, DeciderLogic} from './decider';
 import {cloneDeep} from 'lodash';
+import {createSimpleActionEvaluator} from './simple-action-evaluator';
 
 interface AmoebaState
 {
@@ -112,29 +113,9 @@ class AmoebaLogic implements DeciderLogic<AmoebaAction, AmoebaState, string>
             || this.evaluateState(state, state) === Number.NEGATIVE_INFINITY || !hasEmptySpace;
     }
     
-    public *getBestActionEvaluator(): Iterator<[number, AmoebaAction]|undefined>
+    public getBestActionEvaluator(): Iterator<[number, AmoebaAction]|undefined>
     {
-        let firstValue = true;
-        let bestAction: AmoebaAction | null = null;
-        let bestScore: number = Number.NEGATIVE_INFINITY;
-
-        let choice: Choice<AmoebaAction, AmoebaState>;
-        while (choice = yield)
-        {
-            let score = choice.score;
-            
-            if (choice.state.player !== choice.scoreState.player)
-                score *= -1;
-
-            if (firstValue || bestScore < score)
-            {
-                bestScore = score;
-                bestAction = choice.action;
-                firstValue = false;
-            }
-        }
-
-        return [bestScore, bestAction];
+        return createSimpleActionEvaluator<AmoebaAction, AmoebaState, string>(state => state.player);
     }
 }
 
