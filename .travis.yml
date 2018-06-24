@@ -1,7 +1,16 @@
 language: node_js
 node_js:
-  - "10"
+- '10'
 cache: yarn
 before_install:
-  - curl -o- -L https://yarnpkg.com/install.sh | bash
-  - export PATH="$HOME/.yarn/bin:$PATH"
+- curl -o- -L https://yarnpkg.com/install.sh | bash
+- export PATH="$HOME/.yarn/bin:$PATH"
+deploy:
+  provider: npm
+  email: accounts+npm@denokon.xyz
+  api_key:
+    secure: fY4HukGq2PrHRGK1dLVkuKaKbDYw2a0Ce1jPbnR+NKwK5Jn176WSVwxHqaRtpi1FhDaCYcqZbFgZ7BtrhYKaHXD8YzNi6er0Cd5SYnqASAgh0OGjqbL5ooI5HupoBwuAKS/OVuIW5Dndr/O4dlrMGckc5i6mwAshydyHv3zPCXWFBVlBNSGj5GOK51pLp8AAQWOJZZdPmkccMPoRPoTbPMLkvy74Au6v31PAuDosiVWynFmF5pCspjpoPjkuW4cKrifLWuREKK3tAgz0MmPsIZFw9HwxOdSVZW8XOflY2v9IeHvZ3k7QDsS+wpEuyKchOnrXMQO5crMOqMsoAnKNYWVkEZ2XCJLUYg0KJofTRtZqiq99i8MSLetlJ35lEaEoTMnOUKOB1Woifi80pV6PCZWrrxnrjqoVqouQgyNnAT43r5TrxYfF56hzOEwVtO0qmvCigqtTdC+Q6x885hN6VOM/wVtLe6ertTiE+Ts29XCmWrBsQTbv787TiOzlHeSv7swWW/xDT97YqEcpbGnUI5DJkSojC4CRsfyZJ7jVu6XFq8nXtVFxHszKTQEnOqlB12MgoSkMJB9J2A1vNQIlSnlWSb3fumOBub5zViDq7PI6WFXAUmCi/dtfbkbMO0nj7LSfiASyj8CNVS1sQdC4Pusi00yFul8NbtVHiKJlaqs=
+  on:
+    repo: decimaker/decimaker
+    tags: true
+  tag: next
