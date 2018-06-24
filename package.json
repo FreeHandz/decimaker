@@ -27,7 +27,6 @@
     "hard-source-webpack-plugin": "^0.8.1",
     "jest": "^23.1.0",
     "lodash-es": "^4.17.10",
-    "npm": "^6.1.0",
     "source-map": "^0.7.3",
     "thread-loader": "^1.1.5",
     "ts-jest": "^22.4.6",
