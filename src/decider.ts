@@ -1,75 +1,50 @@
-export interface DeciderLogic<TAction, TState, TPlayer>
-{
-    getActions(state: TState): Iterable<TAction>;
-
-    applyAction(action: TAction, state: TState): TState;
-
-    evaluateState(nextState: TState, state: TState): number;
-
-    isTerminal(state: TState): boolean;
-    
-    getBestActionEvaluator(): Iterator<[number, TAction]|undefined>;
-}
-
-export interface Choice<TAction, TState>
-{
-    score: number;
-    action: TAction;
-    state: TState;
-    scoreState: TState;
-}
+import {DeciderLogic} from './decider-logic';
+import {Choice} from './choice';
 
 export class Decider<TAction, TState, TPlayer>
 {
-    public constructor(private logic: DeciderLogic<TAction, TState, TPlayer>)
+    public beforeExplore: (state: TState) => void = () => {};
+    public afterExplore: (state: TState, score: number, action: TAction|null) => void = () => {};
+    
+    public constructor(private logic: DeciderLogic<TAction, TState>)
     {
 
     }
 
-    public getBestAction(state: TState): TAction
+    public getBestAction(state: TState): TAction|null
     {
-        return this.exploreState(state)[1];
+        const [,action] = this.exploreState(state);
+        
+        return action;
     }
 
-    private exploreState(state: TState): [number, TAction]
+    private exploreState(state: TState): [number, TAction|null]
     {
         let availableActions: Iterable<TAction> = this.logic.getActions(state);
         const actionEvaluator = this.logic.getBestActionEvaluator();
         actionEvaluator.next(); // Initialize generator
+
+        this.beforeExplore(state);
         
         for (let action of availableActions)
         {
             let nextState = this.logic.applyAction(action, state);
-            let score: number;
-            let scoreState: TState;
+            let [score] = this.exploreState(nextState);
 
-            if (this.logic.isTerminal(nextState))
-            {
-                score = this.logic.evaluateState(nextState, state);
-                scoreState = state;
-            }
-            else
-            {
-                [score] = this.exploreState(nextState);
-                scoreState = nextState;
-            }
-            
             actionEvaluator.next({
                 score,
                 action,
                 state,
-                scoreState
-            });
+                nextState
+            } as Choice<TAction, TState>);
         }
         
-        const {done, value} = actionEvaluator.next();
+        // Get the final value from the action evaluator. If none is available, then handle this state as terminal and
+        // calculate it's score. In the latter case return a null action.
+        const result = actionEvaluator.next().value || [this.logic.evaluateState(state), null];
         
-        if (!done)
-            throw new Error(`Best action evaluator did not end when asked`);
+        this.afterExplore(state, result[0], result[1]);
         
-        if (!value)
-            throw new Error(`Best action evaluator did not return result`);
-
-        return value;
+        return result;
     }
 }

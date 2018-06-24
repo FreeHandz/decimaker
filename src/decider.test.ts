@@ -1,6 +1,7 @@
-import {Choice, Decider, DeciderLogic} from './decider';
+import {Decider} from './decider';
 import {cloneDeep} from 'lodash';
 import {createSimpleActionEvaluator} from './simple-action-evaluator';
+import {DeciderLogic} from './decider-logic';
 
 interface AmoebaState
 {
@@ -17,7 +18,7 @@ interface AmoebaAction
     };
 }
 
-class AmoebaLogic implements DeciderLogic<AmoebaAction, AmoebaState, string>
+class AmoebaLogic implements DeciderLogic<AmoebaAction, AmoebaState>
 {
     public applyAction(action: AmoebaAction, state: AmoebaState): AmoebaState
     {
@@ -32,14 +33,14 @@ class AmoebaLogic implements DeciderLogic<AmoebaAction, AmoebaState, string>
         return clonedState;
     }
     
-    private getPointsForDirection(state: AmoebaState, x: number, y: number, dx: number, dy: number, player: string): number
+    private getPointsForDirection(state: AmoebaState, x: number, y: number, dx: number, dy: number): number
     {
         let currentPlayer = 0;
         let oppositePlayer = 0;
 
         for (let i = 0; i < 3; i++)
         {
-            if (state.board[y][x] === player)
+            if (state.board[y][x] === state.player)
                 currentPlayer += 1;
             else if (state.board[y][x] !== '')
                 oppositePlayer += 1;
@@ -69,24 +70,42 @@ class AmoebaLogic implements DeciderLogic<AmoebaAction, AmoebaState, string>
         return 0;
     }
     
-    public evaluateState(nextState: AmoebaState, state: AmoebaState): number
+    public evaluateState(state: AmoebaState): number
     {
         let points = 0;
 
         for (let y = 0; y < 3; y++)
-            points += this.getPointsForDirection(nextState, 0, y, 1, 0, state.player);
+            points += this.getPointsForDirection(state, 0, y, 1, 0);
 
         for (let x = 0; x < 3; x++)
-            points += this.getPointsForDirection(nextState, x, 0, 0, 1, state.player);
+            points += this.getPointsForDirection(state, x, 0, 0, 1);
 
-        points += this.getPointsForDirection(nextState, 0, 0, 1, 1, state.player);
-        points += this.getPointsForDirection(nextState, 0, 2, 1, -1, state.player);
+        points += this.getPointsForDirection(state, 0, 0, 1, 1);
+        points += this.getPointsForDirection(state, 0, 2, 1, -1);
 
         return points;
     }
     
     public *getActions(state: AmoebaState): Iterable<AmoebaAction>
     {
+        let hasEmptySpace = false;
+
+        loop:
+        for (let y = 0; y < state.board.length; y++)
+        {
+            for (let x = 0; x < state.board[y].length; x++)
+            {
+                if (state.board[y][x] === '')
+                {
+                    hasEmptySpace = true;
+                    break loop;
+                }
+            }
+        }
+
+        if (!Number.isFinite(this.evaluateState(state)) || !hasEmptySpace)
+            return;
+        
         for (let y = 0; y < state.board.length; y++)
         {
             for (let x = 0; x < state.board[y].length; x++)
@@ -95,22 +114,6 @@ class AmoebaLogic implements DeciderLogic<AmoebaAction, AmoebaState, string>
                     yield { symbol: state.player, coordinates: { x, y } };
             }
         }
-    }
-    
-    public isTerminal(state: AmoebaState): boolean
-    {
-        let hasEmptySpace = false;
-
-        for (let y = 0; y < state.board.length; y++)
-        {
-            for (let x = 0; x < state.board[y].length; x++)
-            {
-                if (state.board[y][x] === '')
-                    hasEmptySpace = true;
-            }
-        }
-        return this.evaluateState(state, state) === Number.POSITIVE_INFINITY
-            || this.evaluateState(state, state) === Number.NEGATIVE_INFINITY || !hasEmptySpace;
     }
     
     public getBestActionEvaluator(): Iterator<[number, AmoebaAction]|undefined>

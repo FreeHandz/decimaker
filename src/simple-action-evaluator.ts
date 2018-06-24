@@ -1,4 +1,4 @@
-import {Choice} from './decider';
+import {Choice} from './choice';
 
 export function *createSimpleActionEvaluator<TAction, TState, TPlayer>(playerSelector: (state: TState) => TPlayer)
     : Iterator<[number, TAction]|undefined>
@@ -12,7 +12,7 @@ export function *createSimpleActionEvaluator<TAction, TState, TPlayer>(playerSel
     {
         let score = choice.score;
 
-        if (playerSelector(choice.state) !== playerSelector(choice.scoreState))
+        if (playerSelector(choice.state) !== playerSelector(choice.nextState))
             score *= -1;
 
         if (firstValue || bestScore < score)
@@ -23,5 +23,6 @@ export function *createSimpleActionEvaluator<TAction, TState, TPlayer>(playerSel
         }
     }
 
-    return [bestScore, bestAction];
+    if (!firstValue)
+        return [bestScore, bestAction];
 }
