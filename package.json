@@ -11,7 +11,8 @@
   "sideEffects": false,
   "scripts": {
     "serve": "cross-env TS_NODE_PROJECT=\"tsconfig.webpack.json\" webpack --watch --require ts-node/register --config webpack.config.dev.ts",
-    "build": "cross-env TS_NODE_PROJECT=\"tsconfig.webpack.json\" webpack --require ts-node/register --config webpack.config.prod.ts"
+    "build": "cross-env TS_NODE_PROJECT=\"tsconfig.webpack.json\" webpack --require ts-node/register --config webpack.config.prod.ts",
+    "test": "jest"
   },
   "devDependencies": {
     "@types/clean-webpack-plugin": "^0.1.2",
