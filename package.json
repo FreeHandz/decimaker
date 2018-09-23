@@ -1,6 +1,6 @@
 {
   "name": "decimaker",
-  "version": "1.0.0-alpha.5",
+  "version": "1.0.0-alpha.12",
   "description": "The decision maker",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -26,7 +26,6 @@
     "fork-ts-checker-webpack-plugin": "^0.4.2",
     "hard-source-webpack-plugin": "^0.8.1",
     "jest": "^23.1.0",
-    "lodash-es": "^4.17.10",
     "source-map": "^0.7.3",
     "thread-loader": "^1.1.5",
     "ts-jest": "^22.4.6",
@@ -58,5 +57,8 @@
         "tsConfigFile": "tsconfig.jest.json"
       }
     }
+  },
+  "dependencies": {
+    "lodash-es": "^4.17.11"
   }
 }
