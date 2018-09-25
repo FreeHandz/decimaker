@@ -1,6 +1,6 @@
 {
   "name": "decimaker",
-  "version": "1.0.0-alpha.12",
+  "version": "1.0.0-alpha.13",
   "description": "The decision maker",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
