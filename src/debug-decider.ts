@@ -53,7 +53,7 @@ export class DebugDecider<TAction, TState>
             const nextChildren: NodeInfo<TAction, TState>[] = [];
             let nextState = this.logic.applyAction(action, state);
             const startTime = performance.now(); 
-            let [score, chosenAction] = this.exploreState(nextState, depth + 1, nextChildren);
+            const [score] = this.exploreState(nextState, depth + 1, nextChildren);
             const endTime = performance.now();
             
             const nodeInfo = {
@@ -61,10 +61,10 @@ export class DebugDecider<TAction, TState>
                 time: endTime - startTime,
                 score,
                 state: this.storeStates ? nextState : null,
-                action: chosenAction
+                action
             }; 
             
-            const insertIndex = sortedIndexBy(children, nodeInfo, ni => ni.score);
+            const insertIndex = sortedIndexBy(children, nodeInfo, ni => -ni.score);
             children.splice(insertIndex, 0, nodeInfo);
 
             actionEvaluator.next({
